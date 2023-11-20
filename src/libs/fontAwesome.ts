@@ -11,7 +11,8 @@ import {
   faCloudSunRain,
   faSlidersH,
   faListUl,
-  faMap
+  faMap,
+  faGlobe
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -26,5 +27,6 @@ library.add(
   faCloudSunRain,
   faListUl,
   faSlidersH,
-  faMap
+  faMap,
+  faGlobe
 )

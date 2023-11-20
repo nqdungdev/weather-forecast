@@ -11,7 +11,7 @@ const AirConditionsExtend = () => {
   const airConditions: { icon: IconName; name: string; value: number | string | undefined; unit: string }[] = [
     {
       icon: 'sun',
-      name: 'uv index',
+      name: 'UV index',
       value: oneCall?.current.uvi,
       unit: ''
     },
@@ -59,7 +59,7 @@ const AirConditionsExtend = () => {
     }
   ]
   return (
-    <div className='w-full grid grid-cols-2 gap-2'>
+    <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
       {airConditions.map((air, index) => (
         <Card key={index} className='!justify-start !items-start gap-2'>
           <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />

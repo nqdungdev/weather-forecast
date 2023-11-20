@@ -2,12 +2,40 @@ import { useSelector } from 'react-redux'
 import { RootState } from '~/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Card from '~/components/card/Card'
+import { IconName } from '@fortawesome/fontawesome-svg-core'
 
 type Props = {
   onSeeMore: () => void
 }
 const AirConditions = ({ onSeeMore }: Props) => {
   const { oneCall } = useSelector((state: RootState) => state.weatherSlice)
+
+  const airConditions: { icon: IconName; name: string; value: number | string | undefined; unit: string }[] = [
+    {
+      icon: 'thermometer-half',
+      name: 'read feel',
+      value: oneCall?.current.feels_like,
+      unit: '°'
+    },
+    {
+      icon: 'tint',
+      name: 'chance of rain',
+      value: oneCall?.current.rain ? oneCall.current.rain['1h'] : 0,
+      unit: ' mm/h'
+    },
+    {
+      icon: 'wind',
+      name: 'wind',
+      value: oneCall?.current.wind_speed,
+      unit: ' km/h'
+    },
+    {
+      icon: 'sun',
+      name: 'UV index',
+      value: oneCall?.current.uvi,
+      unit: ''
+    }
+  ]
 
   return (
     <Card className='flex-col'>
@@ -29,42 +57,19 @@ const AirConditions = ({ onSeeMore }: Props) => {
         </button>
       </div>
 
-      <div className='w-full grid grid-cols-2 gap-4'>
-        <div className='flex gap-3'>
-          <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', 'thermometer-half']} />
-          <div>
-            <p className='text-label text-secondary mb-2'>Real Feel</p>
-            <p className='text-value text-secondary-light'>{oneCall && Math.round(oneCall.current.feels_like)}°</p>
+      <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-4'>
+        {airConditions.map((air, index) => (
+          <div key={index} className='flex gap-3'>
+            <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />
+            <div>
+              <p className='text-label text-secondary mb-2 capitalize'>{air.name}</p>
+              <p className='text-value text-secondary-light'>
+                {air.value}
+                {air.unit}
+              </p>
+            </div>
           </div>
-        </div>
-
-        <div className='flex gap-3'>
-          <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', 'tint']} />
-          <div>
-            <p className='text-label text-secondary mb-2'>Chance of rain</p>
-            <p className='text-value text-secondary-light'>
-              {oneCall?.current?.rain ? oneCall?.current?.rain['1h'] : 0} mm/h
-            </p>
-          </div>
-        </div>
-
-        <div className='flex gap-3'>
-          <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', 'wind']} />
-
-          <div>
-            <p className='text-label text-secondary mb-2'>Wind</p>
-            <p className='text-value text-secondary-light'>{oneCall?.current.wind_speed} km/h</p>
-          </div>
-        </div>
-
-        <div className='flex gap-3'>
-          <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', 'sun']} />
-
-          <div>
-            <p className='text-label text-secondary mb-2'>UV Index</p>
-            <p className='text-value text-secondary-light'>{oneCall?.current.uvi}</p>
-          </div>
-        </div>
+        ))}
       </div>
     </Card>
   )
