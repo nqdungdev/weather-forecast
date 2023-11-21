@@ -13,7 +13,7 @@ import useResize from '~/hooks/useResize'
 const Dashboard = () => {
   const [showAside, setShowAside] = useState<boolean>(false)
   const [text, setText] = useState<string>('')
-  const [width, height] = useResize()
+  const { width } = useResize()
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { city } = useSelector((state: RootState) => state.geoSlice)
@@ -26,10 +26,10 @@ const Dashboard = () => {
   }, [oneCall, dispatch])
 
   useEffect(() => {
-    width >= 1024 && setShowAside(true)
+    width >= 1024 ? setShowAside(true) : setShowAside(false)
 
     return () => {}
-  }, [width, height])
+  }, [width])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => dispatch(searchCity(text)), 500)

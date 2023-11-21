@@ -7,10 +7,7 @@ const DetailCity = () => {
     <>
       <WeatherHead className='bg-transparent !border-solid border-primary-light border-b !rounded-none !py-2' />
 
-      <TodayForecast
-        shows={3}
-        className='bg-transparent !border-solid border-primary-light border-b !rounded-none !py-2'
-      />
+      <TodayForecast className='bg-transparent !border-solid border-primary-light border-b !rounded-none !py-2' />
 
       <SomeDaysForecast days={3} className='bg-transparent !py-2' />
     </>

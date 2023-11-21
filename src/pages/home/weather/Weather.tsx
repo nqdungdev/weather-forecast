@@ -14,7 +14,7 @@ const Weather = () => {
         <AirConditionsExtend />
       ) : (
         <>
-          <TodayForecast shows={5} />
+          <TodayForecast />
           <AirConditions onSeeMore={() => setSeeMore(true)} />
         </>
       )}

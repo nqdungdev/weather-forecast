@@ -17,8 +17,6 @@ const SearchItem = ({ item }: Props) => {
     data && dispatch(selectCity({ id: data.id, coord: data.coord, name: data.name }))
   }
 
-  console.log(item)
-  console.log(data)
   return isLoading ? (
     <Card>
       <Skeleton />
