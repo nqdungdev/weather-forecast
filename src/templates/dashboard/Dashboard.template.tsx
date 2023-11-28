@@ -66,7 +66,7 @@ const Dashboard = () => {
         </div>
         <div className='lg:hidden fixed top-6 right-6'>
           <FontAwesomeIcon
-            className='w-6 h-6 cursor-pointer text-secondary'
+            className='w-6 h-6 cursor-pointer text-secondary hover:animate-spin'
             icon={['fas', 'globe']}
             onClick={() => setShowAside((prev) => (prev = !prev))}
           />

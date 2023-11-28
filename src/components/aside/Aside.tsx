@@ -16,7 +16,7 @@ const Aside = () => {
   ]
 
   return (
-    <Card className='flex-col !justify-start !w-max lg:!w-full fixed lg:static top-0 right-0 mx-6 my-20 lg:m-0'>
+    <Card className='flex-col !justify-start !w-max lg:!w-full fixed lg:static top-0 right-0 mx-6 my-20 lg:m-0 z-10'>
       <div className='flex flex-col justify-center items-center py-6 lg:p-0'>
         <div className='w-12 h-12'>
           <div

@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
+import Dashboard from '~/templates/dashboard/Dashboard.template'
 import Home from '~/pages/home/Home.page'
-import Map from '~/pages/map/Map'
 import Search from '~/pages/search/Search.page'
 import Settings from '~/pages/settings/Setting'
-import Dashboard from '~/templates/dashboard/Dashboard.template'
+import WeatherMap from '~/pages/WeatherMap/WeatherMap.page'
 
 const router = createBrowserRouter([
   {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'map',
-        element: <Map />
+        element: <WeatherMap />
       }
     ]
   }
