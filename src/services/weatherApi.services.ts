@@ -11,6 +11,7 @@ export const weatherApi = createApi({
   endpoints: (build) => ({
     getWeather: build.query<IWeatherCurrent, { lat: number; lon: number }>({
       query(payload) {
+        console.log(payload)
         return {
           url: `weather?lat=${payload.lat}&lon=${payload.lon}&units=metric&appid=266205880d8bae46de1cdd7cc5b4d7ff`,
           method: 'GET'

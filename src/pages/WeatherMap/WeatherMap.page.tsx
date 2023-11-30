@@ -1,6 +1,10 @@
 import Card from '~/components/card/Card'
 import { useRef, useEffect, useState, useCallback } from 'react'
-import { config, LngLat, Map, MapMouseEvent, MapStyle, Marker } from '@maptiler/sdk'
+import { config, geocoding, GeolocationType, LngLat, Map, MapMouseEvent, MapStyle, Marker } from '@maptiler/sdk'
+import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl-controller'
+import '@maptiler/geocoding-control/style.css'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import '@maptiler/sdk/dist/maptiler-sdk.css'
 import {
   ColorRamp,
@@ -10,21 +14,24 @@ import {
   TemperatureLayer,
   WindLayer
 } from '@maptiler/weather'
-import WeatherInfo from './infor/WeatherInfo'
+import WeatherMapInfo from './infor/WeatherMapInfo'
 import WeatherMapAside from './aside/WeatherMapAside'
+import { useSelector } from 'react-redux'
+import { RootState } from '~/store'
+import { useOutletContext } from 'react-router-dom'
 
 const WeatherMap = () => {
+  // const [mapController, setMapController] = useState<MapController>()
+  const [, setMapController] = useOutletContext()
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
-  const [layerLabel, setLayerLabel] = useState('wind')
+  const marker = useRef(null)
+  const [layerLabel, setLayerLabel] = useState('temperature')
   const pointerDataDiv = useRef<HTMLSpanElement>(null)
-  // const [activeLayer, setActiveLayer] = useState<string>('wind')
-  const activeLayer = useRef('wind')
-  // const tokyo = { lng: 139.753, lat: 35.6844 }
-  // const [zoom] = useState(14)
+  const activeLayer = useRef('temperature')
 
-  config.apiKey = 'K77QqbjAUgGoACHLoRRO'
-
+  config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY
   const weatherLayers: {
     [key: string]: {
       layer: PrecipitationLayer | PressureLayer | RadarLayer | TemperatureLayer | WindLayer
@@ -89,13 +96,18 @@ const WeatherMap = () => {
 
   const mapLoadHandler = () => {
     map?.current?.setPaintProperty('Water', 'fill-color', 'rgba(0, 0, 0, 0.4)')
-    changeWeatherLayer('radar')
+    changeWeatherLayer('wind')
+    reverseGeocoding({ lng: cityPicker.center[0], lat: cityPicker.center[1] } as LngLat)
   }
 
   const mouseOutHandler = (evt: MapMouseEvent) => {
     if (!evt.originalEvent.relatedTarget) {
       ;(pointerDataDiv.current as HTMLSpanElement).innerText = ''
     }
+  }
+
+  const mouseClickHandler = (evt: MapMouseEvent) => {
+    reverseGeocoding(evt.lngLat)
   }
 
   const updatePointerValue = (lngLat: LngLat) => {
@@ -106,7 +118,7 @@ const WeatherMap = () => {
     const weatherLayerUnits = weatherLayers[activeLayer.current]?.units
     if (weatherLayer) {
       const value: any = weatherLayer.pickAt(lngLat.lng, lngLat.lat)
-      console.log(value)
+
       if (!value) {
         ;(pointerDataDiv.current as HTMLSpanElement).innerText = ''
         return
@@ -120,13 +132,33 @@ const WeatherMap = () => {
     updatePointerValue(e.lngLat)
   }
 
+  const reverseGeocoding = async (lngLat: LngLat) => {
+    if (!lngLat.lng || !lngLat.lat) return
+
+    const result = await geocoding.reverse([lngLat.lng, lngLat.lat])
+    // document.getElementById('results').innerHTML = JSON.stringify(result, null, 2)
+    console.log(result)
+
+    if (marker.current) {
+      marker.current?.setLngLat([lngLat.lng, lngLat.lat])
+    } else {
+      marker.current = new Marker({ color: '#FF0000' }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map.current)
+    }
+    map?.current?.flyTo({
+      center: [lngLat.lng, lngLat.lat],
+      // padding: { right: window.innerWidth / 2 },
+      essential: true // this animation is considered essential with respect to prefers-reduced-motion
+    })
+  }
+
   useEffect(() => {
     if (map.current) return // stops map from intializing more than once
 
     map.current = new Map({
       container: mapContainer.current as HTMLDivElement,
       style: MapStyle.DATAVIZ.DARK,
-      // center: [tokyo.lng, tokyo.lat],
+      geolocate: GeolocationType.POINT,
+      // center: [cityPicker.center[0], ityPicker.center[1]],
       // zoom: zoom
       hash: true
     })
@@ -134,6 +166,7 @@ const WeatherMap = () => {
     map.current.on('load', mapLoadHandler)
     map.current.on('mouseout', mouseOutHandler)
     map.current.on('mousemove', mouseMoveHandler)
+    map.current.on('click', mouseClickHandler)
 
     // map.current.on('load', () => {
     //   // Make the water layer a bit transparent:
@@ -142,29 +175,35 @@ const WeatherMap = () => {
     //   // Add the weather layer underneath the `water` layer:
     //   map?.current?.addLayer(layer, 'Water')
     // })
+    setMapController(createMapLibreGlMapController(map.current, maplibregl))
 
-    // new Marker({ color: '#FF0000' }).setLngLat([139.7525, 35.6846]).addTo(map.current)
+    // new Marker({ color: '#FF0000' }).setLngLat([city.coord.lon, city.coord.lat]).addTo(map.current)
 
     return () => {
       map?.current?.off('load', mapLoadHandler)
     }
   }, [])
 
+  useEffect(() => {
+    reverseGeocoding({ lng: cityPicker.center[0], lat: cityPicker.center[1] } as LngLat)
+    return () => {}
+  }, [cityPicker])
+
   return (
     <div className='grid grid-cols-12'>
-      <Card className='col-span-8'>
-        <div className='relative w-full h-[calc(100vh_-_77px)]'>
-          <WeatherInfo layerLabel={layerLabel} ref={pointerDataDiv} />
-          <div ref={mapContainer} className='absolute w-full h-full'></div>
-        </div>
-      </Card>
-
-      <Card className='col-span-4'>
+      <Card className='col-span-12 md:col-span-4 md:order-2'>
         <WeatherMapAside
           weatherLayers={weatherLayers}
           layerLabel={layerLabel}
           changeWeatherLayer={changeWeatherLayer}
         />
+      </Card>
+      <Card className='col-span-12 md:col-span-8 md:order-1'>
+        <div className='relative w-full h-[calc(100vh_-_77px)]'>
+          <WeatherMapInfo layerLabel={layerLabel} ref={pointerDataDiv} />
+          {/* <GeocodingControl apiKey={import.meta.env.VITE_MAPTILER_API_KEY} mapController={mapController} /> */}
+          <div ref={mapContainer} className='absolute w-full h-full'></div>
+        </div>
       </Card>
     </div>
   )

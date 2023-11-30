@@ -18,3 +18,25 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.geo--config > div {
+  width: 100%;
+  background: transparent;
+}
+
+.geo-input--config .input-group:focus-within {
+  outline: none !important;
+}
+
+.geo-input--config .input-group input {
+  color: white !important;
+}
+
+.geo-input--config .input-group .search-button svg {
+  transition: all 0.4s;
+}
+
+.geo-input--config .input-group .search-button:hover svg {
+  transition: all 0.4s;
+  fill: white;
+}

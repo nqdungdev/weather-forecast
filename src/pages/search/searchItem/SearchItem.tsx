@@ -1,20 +1,23 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '~/store'
 import { useGetWeatherQuery } from '~/services/weatherApi.services'
-import { selectCity } from '~/features/geo.slice'
-import { IGeoData } from '~/interfaces/geo.interfaces'
+import { pickCity } from '~/features/geo.slice'
 import convertTimestamp from '~/utils/convertTimestamp'
 import Card from '~/components/card/Card'
 import Skeleton from '~/components/skeleton/Skeleton'
+import type { Feature } from 'geojson'
 
-type Props = { item: IGeoData }
+type Props = { item: Feature }
 
 const SearchItem = ({ item }: Props) => {
-  const { data, isLoading } = useGetWeatherQuery({ lat: item.latitude, lon: item.longitude })
-  const { city } = useSelector((state: RootState) => state.geoSlice)
+  const { data, isLoading } = useGetWeatherQuery({
+    lon: item.center[0],
+    lat: item.center[1]
+  })
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const dispatch = useDispatch<AppDispatch>()
   const handleClick = () => {
-    data && dispatch(selectCity({ id: data.id, coord: data.coord, name: data.name }))
+    data && dispatch(pickCity(item))
   }
 
   return isLoading ? (
@@ -24,7 +27,7 @@ const SearchItem = ({ item }: Props) => {
   ) : (
     <Card
       className={`cursor-pointer ${
-        data && city.id === data.id ? '!bg-transparent !border-solid border border-accent-blue' : ''
+        data && cityPicker.id === item.id ? '!bg-transparent !border-solid border border-accent-blue' : ''
       }`}
       onClick={handleClick}
     >

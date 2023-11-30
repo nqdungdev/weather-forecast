@@ -2,17 +2,9 @@ import { forwardRef } from 'react'
 
 type Props = {
   layerLabel: string
-  // pointerDataDiv: string
 }
 
-const WeatherInfo = forwardRef<HTMLSpanElement, Props>(({ layerLabel }, ref) => {
-  // console.log(pointerDataDiv);
-  // const [pointerData, setPointerData] = useState(pointerDataDiv)
-  // useEffect(() => {
-  //   setPointerData(pointerDataDiv)
-  //   return () => {}
-  // }, [pointerDataDiv])
-
+const WeatherMapInfo = forwardRef<HTMLSpanElement, Props>(({ layerLabel }, ref) => {
   return (
     <>
       {/* <div className='absolute w-full flex flex-col text-center bottom-0 m-2 text-white p-5 z-10'>
@@ -41,4 +33,4 @@ const WeatherInfo = forwardRef<HTMLSpanElement, Props>(({ layerLabel }, ref) => 
     </>
   )
 })
-export default WeatherInfo
+export default WeatherMapInfo

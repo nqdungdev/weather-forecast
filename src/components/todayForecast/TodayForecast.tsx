@@ -4,6 +4,7 @@ import convertTimestamp from '~/utils/convertTimestamp'
 import Card from '../card/Card'
 import useContainerDimensions from '~/hooks/useContainerDimensions'
 import { useEffect, useRef, useState } from 'react'
+import { useGetOneCallQuery } from '~/services/oneCallApi.services'
 
 type Props = { className?: string }
 
@@ -11,7 +12,12 @@ const TodayForecast = ({ className }: Props) => {
   const [show, setShow] = useState<number>(5)
   const ref = useRef(null)
   const { width } = useContainerDimensions(ref)
-  const { oneCall } = useSelector((state: RootState) => state.weatherSlice)
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
+  const { data: oneCall } = useGetOneCallQuery({
+    lon: cityPicker?.center[0],
+    lat: cityPicker?.center[1]
+  })
+
   useEffect(() => {
     width && width <= 400 ? setShow(3) : setShow(5)
 

@@ -2,13 +2,18 @@ import { useSelector } from 'react-redux'
 import { RootState } from '~/store'
 import Card from '~/components/card/Card'
 import convertTimestamp from '~/utils/convertTimestamp'
+import { useGetOneCallQuery } from '~/services/oneCallApi.services'
 
 type Props = {
   days: number
   className?: string
 }
 const SomeDaysForecast = ({ days, className }: Props) => {
-  const { oneCall } = useSelector((state: RootState) => state.weatherSlice)
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
+  const { data: oneCall } = useGetOneCallQuery({
+    lon: cityPicker?.center[0],
+    lat: cityPicker?.center[1]
+  })
 
   return (
     <Card className={`flex-col ${className ? className : ''}`}>

@@ -1,29 +1,22 @@
-import { useEffect, ChangeEvent, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '~/store'
+import { useEffect, useState, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '~/store'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { useGetOneCallQuery } from '~/services/oneCallApi.services'
-import { setOneCall } from '~/features/weather.slice'
-import { searchCity } from '~/features/geo.slice'
 import Card from '~/components/card/Card'
 import Aside from '~/components/aside/Aside'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import useResize from '~/hooks/useResize'
+import { GeocodingControl } from '@maptiler/geocoding-control/react'
+import type { Feature } from 'geojson'
+import { pickCity, setCityListed } from '~/features/geo.slice'
+import type { MapController } from '@maptiler/geocoding-control/types'
 
 const Dashboard = () => {
   const [showAside, setShowAside] = useState<boolean>(false)
-  const [text, setText] = useState<string>('')
+  const [mapController, setMapController] = useState<MapController>()
   const { width } = useResize()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
-  const { city } = useSelector((state: RootState) => state.geoSlice)
-  const { data: oneCall } = useGetOneCallQuery(city.coord)
-
-  useEffect(() => {
-    oneCall && dispatch(setOneCall(oneCall))
-
-    return () => {}
-  }, [oneCall, dispatch])
 
   useEffect(() => {
     width >= 1024 ? setShowAside(true) : setShowAside(false)
@@ -31,18 +24,24 @@ const Dashboard = () => {
     return () => {}
   }, [width])
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => dispatch(searchCity(text)), 500)
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [dispatch, text])
+  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setText(event.target.value)
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value)
+  //   navigate('/search')
+  // }
 
-    navigate('/search')
+  const pickCityHandler = (event: Feature | undefined) => {
+    event && dispatch(pickCity(event))
   }
+
+  const featuresListedHandler = (event: Feature[] | undefined) => {
+    const cities = event?.reduce((arr: Feature[], data: Feature) => (arr = [...arr, data]), [])
+    cities && dispatch(setCityListed(cities))
+  }
+
+  // const handleMapController = useCallback((data: MapController) => {
+  //   setMapController(data)
+  // }, [])
 
   return (
     <div className='relative w-full py-3 px-4 grid grid-cols-12 bg-primary-dark min-h-screen'>
@@ -52,15 +51,15 @@ const Dashboard = () => {
 
       <div className='col-span-12 lg:col-span-11'>
         <div className='grid grid-cols-12'>
-          <Card className='!rounded-xl !h-[48px] col-span-11 lg:col-span-8'>
-            <input
-              type='text'
+          <Card className='w-full !rounded-xl !h-[48px] col-span-11 lg:col-span-8 geo--config !overflow-visible'>
+            <GeocodingControl
+              class='!bg-transparent !w-full !max-w-full !z-10 !text-secondary-white geo-input--config'
               placeholder='Search for cities'
-              className='px-2 m-0 outline-none border-none bg-transparent text-body'
-              style={{
-                color: 'rgb(221, 224, 228)'
-              }}
-              onChange={handleChange}
+              apiKey={import.meta.env.VITE_MAPTILER_API_KEY}
+              onPick={pickCityHandler}
+              onFeaturesListed={featuresListedHandler}
+              minLength={1}
+              mapController={mapController}
             />
           </Card>
         </div>
@@ -71,7 +70,7 @@ const Dashboard = () => {
             onClick={() => setShowAside((prev) => (prev = !prev))}
           />
         </div>
-        <Outlet />
+        <Outlet context={[mapController, setMapController] satisfies MapController} />
       </div>
     </div>
   )

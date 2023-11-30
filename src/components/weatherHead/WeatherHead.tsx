@@ -8,8 +8,11 @@ type Props = { className?: string }
 const WeatherHead = ({ className }: Props) => {
   const ref = useRef(null)
   const { width } = useContainerDimensions(ref)
-  const { city } = useSelector((state: RootState) => state.geoSlice)
-  const { data: weather } = useGetWeatherQuery({ ...city.coord })
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
+  const { data: weather } = useGetWeatherQuery({
+    lon: cityPicker?.center[0],
+    lat: cityPicker?.center[1]
+  })
 
   return (
     <Card
