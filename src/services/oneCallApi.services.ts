@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from './axiosBaseQuery'
-import { IWeatherOneCall } from '~/interfaces/weather.interfaces'
+import { ICoord, IWeatherOneCall } from '~/interfaces/weather.interfaces'
 
 export const oneCallApi = createApi({
   reducerPath: 'oneCallApi',
@@ -9,7 +9,7 @@ export const oneCallApi = createApi({
     baseUrl: 'http://openweathermap.org/data/2.5/'
   }),
   endpoints: (build) => ({
-    getOneCall: build.query<IWeatherOneCall, { lat: number; lon: number }>({
+    getOneCall: build.query<IWeatherOneCall, ICoord>({
       query(payload) {
         return {
           url: `onecall?lat=${payload.lat}&lon=${payload.lon}&units=metric&appid=${

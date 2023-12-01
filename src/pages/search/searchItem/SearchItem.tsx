@@ -11,15 +11,16 @@ type Props = { item: Feature }
 
 const SearchItem = ({ item }: Props) => {
   const { data, isLoading } = useGetWeatherQuery({
-    lon: item.center[0],
-    lat: item.center[1]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lon: (item as any).center[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lat: (item as any).center[1]
   })
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const dispatch = useDispatch<AppDispatch>()
   const handleClick = () => {
     data && dispatch(pickCity(item))
   }
-
   return isLoading ? (
     <Card>
       <Skeleton />
@@ -38,7 +39,18 @@ const SearchItem = ({ item }: Props) => {
             src={`https://openweathermap.org/img/wn/${data?.weather[0].icon}@2x.png`}
           />
           <div>
-            <p className='text-secondary-light text-value mb-1'>{data?.name}</p>
+            <p className='text-secondary-light text-value mb-1'>
+              {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (item as any).place_name_en.split(',')[0]
+              }
+            </p>
+            <p className='text-secondary-light text-body mb-1'>
+              {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (item as any).place_name_en.split(',').slice(1).join(',')
+              }
+            </p>
             <p className='text-secondary text-label'>{data && convertTimestamp(data.dt).time}</p>
           </div>
         </div>

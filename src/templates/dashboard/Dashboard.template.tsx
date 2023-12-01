@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '~/store'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import Card from '~/components/card/Card'
 import Aside from '~/components/aside/Aside'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,7 @@ import useResize from '~/hooks/useResize'
 import { GeocodingControl } from '@maptiler/geocoding-control/react'
 import type { Feature } from 'geojson'
 import { pickCity, setCityListed } from '~/features/geo.slice'
-import type { MapController } from '@maptiler/geocoding-control/types'
+import { MapController } from 'node_modules/@maptiler/geocoding-control/types'
 
 const Dashboard = () => {
   const [showAside, setShowAside] = useState<boolean>(false)
@@ -51,9 +51,9 @@ const Dashboard = () => {
 
       <div className='col-span-12 lg:col-span-11'>
         <div className='grid grid-cols-12'>
-          <Card className='w-full !rounded-xl !h-[48px] col-span-11 lg:col-span-8 geo--config !overflow-visible'>
+          <Card className='w-full !rounded-xl !h-[48px] col-span-11 lg:col-span-8 geo--config !overflow-visible !z-30'>
             <GeocodingControl
-              class='!bg-transparent !w-full !max-w-full !z-10 !text-secondary-white geo-input--config'
+              class='!bg-transparent !w-full !max-w-full !z-30 !text-secondary-white geo-input--config'
               placeholder='Search for cities'
               apiKey={import.meta.env.VITE_MAPTILER_API_KEY}
               onPick={pickCityHandler}
@@ -70,7 +70,8 @@ const Dashboard = () => {
             onClick={() => setShowAside((prev) => (prev = !prev))}
           />
         </div>
-        <Outlet context={[mapController, setMapController] satisfies MapController} />
+
+        <Outlet context={[mapController, setMapController]} />
       </div>
     </div>
   )

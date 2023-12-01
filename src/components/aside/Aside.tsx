@@ -11,8 +11,8 @@ const Aside = () => {
   const categories: { label: string; path: string; icon: IconName }[] = [
     { label: 'weather', path: '/', icon: 'cloud-sun-rain' },
     { label: 'cities', path: '/search', icon: 'list-ul' },
-    { label: 'settings', path: '/settings', icon: 'sliders-h' },
-    { label: 'map', path: '/map', icon: 'map' }
+    { label: 'map', path: '/map', icon: 'map' },
+    { label: 'settings', path: '/settings', icon: 'sliders-h' }
   ]
 
   return (

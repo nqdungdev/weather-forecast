@@ -11,8 +11,10 @@ type Props = {
 const SomeDaysForecast = ({ days, className }: Props) => {
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const { data: oneCall } = useGetOneCallQuery({
-    lon: cityPicker?.center[0],
-    lat: cityPicker?.center[1]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lon: (cityPicker as any).center[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lat: (cityPicker as any).center[1]
   })
 
   return (

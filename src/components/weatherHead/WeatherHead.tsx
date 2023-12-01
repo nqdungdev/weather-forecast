@@ -10,20 +10,37 @@ const WeatherHead = ({ className }: Props) => {
   const { width } = useContainerDimensions(ref)
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const { data: weather } = useGetWeatherQuery({
-    lon: cityPicker?.center[0],
-    lat: cityPicker?.center[1]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lon: (cityPicker as any).center[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lat: (cityPicker as any).center[1]
   })
+
+  console.log(cityPicker)
 
   return (
     <Card
-      className={`!bg-transparent ${width <= 400 ? 'flex-col !items-start' : 'flex-row'} ${className ? className : ''}`}
+      className={`!bg-transparent ${width <= 400 ? 'flex-col !items-center' : 'flex-row'} ${
+        className ? className : ''
+      }`}
       ref={ref}
     >
       <div className={`w-1/2 max-w-[150px] sm:max-w-[250px] h-full ${width <= 400 ? 'order-1' : 'order-2'}`}>
         <img className='w-full' src={`https://openweathermap.org/img/wn/${weather?.weather[0].icon}@4x.png`} />
       </div>
-      <div className={`w-full flex flex-col ${width <= 400 ? 'order-2' : 'order-1'}`}>
-        <p className='capitalize text-headline text-secondary-white'>{weather?.name}</p>
+      <div className={`w-full flex flex-col ${width <= 400 ? 'order-2 !items-center' : 'order-1'}`}>
+        <p className={`capitalize text-headline text-secondary-white ${width <= 400 ? 'text-center' : 'text-start'}`}>
+          {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (cityPicker as any).place_name_en.split(',')[0]
+          }
+        </p>
+        <p className={`capitalize text-body text-secondary-light mb-1 ${width <= 400 ? 'text-center' : 'text-start'}`}>
+          {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (cityPicker as any).place_name_en.split(',').slice(1).join(',')
+          }
+        </p>
 
         <p className='text-body text-secondary'>Chance of rain: {weather?.rain ? weather?.rain['1h'] : 0}mm/h</p>
 

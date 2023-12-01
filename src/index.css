@@ -40,3 +40,8 @@ code {
   transition: all 0.4s;
   fill: white;
 }
+
+.geo--config > div .geo-input--config ul.svelte-1r7dv7 {
+  background: red;
+  display: block !important;
+}
