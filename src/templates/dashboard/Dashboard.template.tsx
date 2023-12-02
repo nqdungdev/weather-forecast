@@ -9,11 +9,11 @@ import useResize from '~/hooks/useResize'
 import { GeocodingControl } from '@maptiler/geocoding-control/react'
 import type { Feature } from 'geojson'
 import { pickCity, setCityListed } from '~/features/geo.slice'
-import { MapController } from 'node_modules/@maptiler/geocoding-control/types'
+// import { MapController } from 'node_modules/@maptiler/geocoding-control/types'
 
 const Dashboard = () => {
   const [showAside, setShowAside] = useState<boolean>(false)
-  const [mapController, setMapController] = useState<MapController>()
+  // const [mapController, setMapController] = useState<MapController>()
   const { width } = useResize()
   // const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
@@ -59,7 +59,7 @@ const Dashboard = () => {
               onPick={pickCityHandler}
               onFeaturesListed={featuresListedHandler}
               minLength={1}
-              mapController={mapController}
+              // mapController={mapController}
             />
           </Card>
         </div>
@@ -70,8 +70,8 @@ const Dashboard = () => {
             onClick={() => setShowAside((prev) => (prev = !prev))}
           />
         </div>
-
-        <Outlet context={[mapController, setMapController]} />
+        {/* context={[mapController, setMapController]} */}
+        <Outlet />
       </div>
     </div>
   )

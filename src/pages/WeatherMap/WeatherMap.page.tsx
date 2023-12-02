@@ -79,7 +79,7 @@ const WeatherMap = () => {
 
   const changeWeatherLayer = useCallback((type: string) => {
     if (type !== activeLayer.current) {
-      if (map?.current?.getLayer(type)) {
+      if (map?.current?.getLayer(activeLayer.current)) {
         const activeWeatherLayer = weatherLayers[activeLayer.current]?.layer
         if (activeWeatherLayer) {
           map?.current?.setLayoutProperty(activeLayer.current, 'visibility', 'none')
@@ -94,17 +94,19 @@ const WeatherMap = () => {
       activeLayer.current = type
       setLayerLabel(type)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const mapLoadHandler = () => {
     map?.current?.setPaintProperty('Water', 'fill-color', 'rgba(0, 0, 0, 0.4)')
     changeWeatherLayer('wind')
-    reverseGeocoding({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lng: (cityPicker as any).center[0],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lat: (cityPicker as any).center[1]
-    } as LngLat)
+    cityPicker &&
+      reverseGeocoding({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        lng: (cityPicker as any)?.center[0],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        lat: (cityPicker as any)?.center[1]
+      } as LngLat)
   }
 
   const mouseOutHandler = (evt: MapMouseEvent) => {
@@ -114,7 +116,7 @@ const WeatherMap = () => {
   }
 
   const mouseClickHandler = (evt: MapMouseEvent) => {
-    reverseGeocoding(evt.lngLat)
+    cityPicker && reverseGeocoding(evt.lngLat)
   }
 
   const updatePointerValue = (lngLat: LngLat) => {
@@ -143,18 +145,22 @@ const WeatherMap = () => {
 
   const reverseGeocoding = async (lngLat: LngLat) => {
     if (!lngLat.lng || !lngLat.lat) return
-
     const result = await geocoding.reverse([lngLat.lng, lngLat.lat])
-    // document.getElementById('results').innerHTML = JSON.stringify(result, null, 2)
-    // console.log(result)
 
     if (marker.current) {
       marker.current?.setLngLat([lngLat.lng, lngLat.lat])
     } else {
       marker.current =
-        map.current && new Marker({ color: '#FF0000' }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map.current)
+        map.current &&
+        new Marker({ color: '#FF0000', draggable: true }).setLngLat([lngLat.lng, lngLat.lat]).addTo(map.current)
     }
-    dispatch(pickCity(result.features[0]))
+
+    const exact = result.features.filter(
+      (feature) => feature.center[0] === lngLat.lng && feature.center[1] === lngLat.lat
+    )
+
+    dispatch(pickCity(exact.length !== 0 ? exact[0] : result.features[0]))
+
     map?.current?.flyTo({
       center: [lngLat.lng, lngLat.lat],
       essential: true // this animation is considered essential with respect to prefers-reduced-motion
@@ -172,9 +178,9 @@ const WeatherMap = () => {
       zoom: 14,
       hash: true
     })
-    // map.current.addControl(new NavigationControl(), 'top-right')
-    // setMapController(createMapLibreGlMapController((map.current), maplibregl))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
+    // setMapController(createMapLibreGlMapController(map.current, maplibregl))
 
     map.current.on('load', mapLoadHandler)
     map.current.on('mouseout', mouseOutHandler)
@@ -194,17 +200,19 @@ const WeatherMap = () => {
     return () => {
       map?.current?.off('load', mapLoadHandler)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     reverseGeocoding({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lng: (cityPicker as any).center[0],
+      lng: (cityPicker as any)?.center[0],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lat: (cityPicker as any).center[1]
+      lat: (cityPicker as any)?.center[1]
     } as LngLat)
     return () => {}
-  }, [cityPicker])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps
+  }, [(cityPicker as any)?.center[0], (cityPicker as any)?.center[1]])
 
   return (
     <div className='grid grid-cols-12'>

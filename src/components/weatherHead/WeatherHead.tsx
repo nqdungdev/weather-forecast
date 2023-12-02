@@ -11,12 +11,10 @@ const WeatherHead = ({ className }: Props) => {
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
   const { data: weather } = useGetWeatherQuery({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lon: (cityPicker as any).center[0],
+    lon: (cityPicker as any)?.center[0],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lat: (cityPicker as any).center[1]
+    lat: (cityPicker as any)?.center[1]
   })
-
-  console.log(cityPicker)
 
   return (
     <Card
@@ -32,14 +30,12 @@ const WeatherHead = ({ className }: Props) => {
         <p className={`capitalize text-headline text-secondary-white ${width <= 400 ? 'text-center' : 'text-start'}`}>
           {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (cityPicker as any).place_name_en.split(',')[0]
+            (cityPicker as any)?.place_name_en.split(',')[0]
           }
         </p>
         <p className={`capitalize text-body text-secondary-light mb-1 ${width <= 400 ? 'text-center' : 'text-start'}`}>
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (cityPicker as any).place_name_en.split(',').slice(1).join(',')
-          }
+          {// eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (cityPicker as any)?.place_name_en.split(',').slice(1).join(',')}
         </p>
 
         <p className='text-body text-secondary'>Chance of rain: {weather?.rain ? weather?.rain['1h'] : 0}mm/h</p>
