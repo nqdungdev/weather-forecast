@@ -16,7 +16,8 @@ type Props = {
 
 const WeatherMapAside = ({ weatherLayers, layerLabel, changeWeatherLayer }: Props) => {
   return (
-    <div className='col-span-12 md:col-span-4 md:order-2 flex flex-col'>
+    <div className='col-span-12 md:col-span-4 md:order-2 flex flex-col md:flex-col-reverse'>
+      <WeatherHead />
       <Card className=''>
         <div className='w-full flex flex-wrap items-center md:flex-col gap-2'>
           {Object.keys(weatherLayers).map((type, index) => (
@@ -35,7 +36,6 @@ const WeatherMapAside = ({ weatherLayers, layerLabel, changeWeatherLayer }: Prop
           ))}
         </div>
       </Card>
-      <WeatherHead />
     </div>
   )
 }

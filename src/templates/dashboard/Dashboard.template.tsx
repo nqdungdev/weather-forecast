@@ -35,8 +35,7 @@ const Dashboard = () => {
   }
 
   const featuresListedHandler = (event: Feature[] | undefined) => {
-    const cities = event?.reduce((arr: Feature[], data: Feature) => (arr = [...arr, data]), [])
-    cities && dispatch(setCityListed(cities))
+    event && dispatch(setCityListed(event))
   }
 
   // const handleMapController = useCallback((data: MapController) => {
@@ -63,7 +62,7 @@ const Dashboard = () => {
             />
           </Card>
         </div>
-        <div className='lg:hidden fixed top-6 right-6'>
+        <div className='lg:hidden fixed top-6 right-6 z-50'>
           <FontAwesomeIcon
             className='w-6 h-6 cursor-pointer text-secondary hover:animate-spin'
             icon={['fas', 'globe']}

@@ -34,7 +34,7 @@ export interface IWeatherOneCall {
     precipitation: number
   }[]
   hourly: Omit<IWeatherForecast, 'sunrise' | 'sunset'>[]
-  daily: (Omit<IWeatherForecast, 'visibility' | 'temp' | 'feels_like'> & {
+  daily: (Omit<IWeatherForecast, 'visibility' | 'temp' | 'feels_like' | 'rain' | 'snow'> & {
     moonrise: number
     moonset: number
     moon_phase: number
@@ -53,6 +53,8 @@ export interface IWeatherOneCall {
       eve: number
       morn: number
     }
+    rain?: number
+    snow?: number
   })[]
   alerts?: [
     {

@@ -3,12 +3,21 @@ import { RootState } from '~/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Card from '~/components/card/Card'
 import { IconName } from '@fortawesome/fontawesome-svg-core'
+import { useGetOneCallQuery } from '~/services/oneCallApi.services'
+import Skeleton from '~/components/skeleton/Skeleton'
 
 type Props = {
   onSeeMore: () => void
 }
 const AirConditions = ({ onSeeMore }: Props) => {
-  const { oneCall } = useSelector((state: RootState) => state.weatherSlice)
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
+
+  const { data: oneCall, isLoading } = useGetOneCallQuery({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lon: (cityPicker as any).center[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lat: (cityPicker as any).center[1]
+  })
 
   const airConditions: { icon: IconName; name: string; value: number | string | undefined; unit: string }[] = [
     {
@@ -56,21 +65,24 @@ const AirConditions = ({ onSeeMore }: Props) => {
           </span>
         </button>
       </div>
-
-      <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        {airConditions.map((air, index) => (
-          <div key={index} className='flex gap-3'>
-            <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />
-            <div>
-              <p className='text-label text-secondary mb-2 capitalize'>{air.name}</p>
-              <p className='text-value text-secondary-light'>
-                {air.value}
-                {air.unit}
-              </p>
+      {isLoading ? (
+        <Skeleton />
+      ) : (
+        <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          {airConditions.map((air, index) => (
+            <div key={index} className='flex gap-3'>
+              <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />
+              <div>
+                <p className='text-label text-secondary mb-2 capitalize'>{air.name}</p>
+                <p className='text-value text-secondary-light'>
+                  {air.value}
+                  {air.unit}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </Card>
   )
 }

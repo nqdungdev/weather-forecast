@@ -1,12 +1,13 @@
-const Skeleton = () => {
+type Props = {
+  className?: string
+}
+
+const Skeleton = ({ className }: Props) => {
   return (
-    <div
-      role='status'
-      className='space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center'
-    >
-      <div className='flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700'>
+    <div role='status' className={`animate-pulse w-full flex gap-2 ${className && className}`}>
+      <div className='flex items-center justify-center w-full bg-gray-300 rounded dark:bg-gray-700'>
         <svg
-          className='w-6 h-6 text-gray-200 dark:text-gray-600'
+          className='w-full text-gray-200 dark:text-gray-600'
           aria-hidden='true'
           xmlns='http://www.w3.org/2000/svg'
           fill='currentColor'

@@ -5,6 +5,8 @@ import Card from '../card/Card'
 import useContainerDimensions from '~/hooks/useContainerDimensions'
 import { useEffect, useRef, useState } from 'react'
 import { useGetOneCallQuery } from '~/services/oneCallApi.services'
+import convertIcons from '~/utils/convertIcons'
+import Skeleton from '../skeleton/Skeleton'
 
 type Props = { className?: string }
 
@@ -13,13 +15,14 @@ const TodayForecast = ({ className }: Props) => {
   const ref = useRef(null)
   const { width } = useContainerDimensions(ref)
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
-  const { data: oneCall } = useGetOneCallQuery({
+  const { data: oneCall, isLoading } = useGetOneCallQuery({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lon: (cityPicker as any).center[0],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lat: (cityPicker as any).center[1]
   })
 
+  console.log(oneCall)
   useEffect(() => {
     width && width <= 400 ? setShow(3) : setShow(5)
 
@@ -31,32 +34,42 @@ const TodayForecast = ({ className }: Props) => {
       <div className='w-full flex justify-between items-center mb-6'>
         <p className='w-full uppercase text-subHeadline text-secondary'>today's forecast</p>
       </div>
-
-      <div className={`w-full grid ${width <= 400 ? 'grid-cols-3' : 'grid-cols-5'}`}>
-        {oneCall?.hourly.map(
-          (hour, index: number) =>
-            index < show && (
-              <div
-                key={index}
-                className={`col-span-1 flex flex-col justify-center border-solid border-primary-light ${
-                  index < show - 1 ? 'border-r' : 'border-none'
-                }`}
-              >
-                <p className='text-body font-semibold text-center text-secondary'>{convertTimestamp(hour.dt).time}</p>
-                <img src={`https://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`} />
-                <p
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 600,
-                    textAlign: 'center'
-                  }}
+      {isLoading ? (
+        <Skeleton />
+      ) : (
+        <div className={`w-full grid ${width <= 400 ? 'grid-cols-3' : 'grid-cols-5'}`}>
+          {oneCall?.hourly.map(
+            (hour, index: number) =>
+              index < show && (
+                <div
+                  key={index}
+                  className={`col-span-1 flex flex-col justify-center border-solid border-primary-light ${
+                    index < show - 1 ? 'border-r' : 'border-none'
+                  }`}
                 >
-                  <span style={{ color: '#dde0e4ff' }}>{Math.round(hour.temp)}°</span>
-                </p>
-              </div>
-            )
-        )}
-      </div>
+                  <p className='text-body font-semibold text-center text-secondary'>{convertTimestamp(hour.dt).time}</p>
+                  <img
+                    className='w-full'
+                    src={
+                      hour.dt < oneCall.current.sunrise && hour.dt > oneCall.current.sunset
+                        ? convertIcons(hour.weather[0].id)
+                        : convertIcons(hour.weather[0].id, false)
+                    }
+                  />
+                  <p
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 600,
+                      textAlign: 'center'
+                    }}
+                  >
+                    <span style={{ color: '#dde0e4ff' }}>{Math.round(hour.temp)}°</span>
+                  </p>
+                </div>
+              )
+          )}
+        </div>
+      )}
     </Card>
   )
 }

@@ -55,7 +55,7 @@ const SearchItem = ({ item }: Props) => {
           </div>
         </div>
 
-        <p className='text-[#dde0e4ff] text-[40px]'>{data && Math.round(data.main.temp)}°</p>
+        <p className='hidden sm:block text-[#dde0e4ff] text-[40px]'>{data && Math.round(data.main.temp)}°</p>
       </div>
     </Card>
   )

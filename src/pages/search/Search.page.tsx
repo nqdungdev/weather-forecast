@@ -10,7 +10,7 @@ const Search = () => {
     <div className='grid grid-cols-12'>
       <div className='col-span-12 md:col-span-8'>
         {cityList.length === 0 ? (
-          <div className='flex flex-col my-5 h-full justify-center items-center'>
+          <div className='flex flex-col my-5 justify-center items-center'>
             <span className='flex justify-center text-headline text-secondary pb-3'> X__X </span>
             <span className='text-secondary-white flex justify-center text-subHeadline'>No matching cities</span>
           </div>

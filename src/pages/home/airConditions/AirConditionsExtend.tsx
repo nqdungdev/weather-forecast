@@ -4,9 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconName } from '@fortawesome/fontawesome-svg-core'
 import convertTimestamp from '~/utils/convertTimestamp'
 import Card from '~/components/card/Card'
+import { useGetOneCallQuery } from '~/services/oneCallApi.services'
+import Skeleton from '~/components/skeleton/Skeleton'
 
 const AirConditionsExtend = () => {
-  const { oneCall } = useSelector((state: RootState) => state.weatherSlice)
+  const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
+
+  const { data: oneCall, isLoading } = useGetOneCallQuery({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lon: (cityPicker as any).center[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lat: (cityPicker as any).center[1]
+  })
 
   const airConditions: { icon: IconName; name: string; value: number | string | undefined; unit: string }[] = [
     {
@@ -30,7 +39,7 @@ const AirConditionsExtend = () => {
     {
       icon: 'eye',
       name: 'visibility',
-      value: oneCall?.current.visibility,
+      value: oneCall?.current.visibility && oneCall?.current.visibility / 1000,
       unit: ' km'
     },
     {
@@ -62,14 +71,20 @@ const AirConditionsExtend = () => {
     <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
       {airConditions.map((air, index) => (
         <Card key={index} className='!justify-start !items-start gap-2'>
-          <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />
-          <div>
-            <p className='text-label text-secondary mb-2 uppercase'>{air.name}</p>
-            <p className='text-value text-secondary-light'>
-              {air.value ? air.value : 0}
-              {air.unit}
-            </p>
-          </div>
+          {isLoading ? (
+            <Skeleton />
+          ) : (
+            <>
+              <FontAwesomeIcon className='w-6 h-6 text-secondary' icon={['fas', air.icon]} />
+              <div>
+                <p className='text-label text-secondary mb-2 uppercase'>{air.name}</p>
+                <p className='text-value text-secondary-light'>
+                  {air.value ? air.value : 0}
+                  {air.unit}
+                </p>
+              </div>
+            </>
+          )}
         </Card>
       ))}
     </div>
