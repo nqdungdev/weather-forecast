@@ -159,7 +159,10 @@ const WeatherMap = () => {
       (feature) => feature.center[0] === lngLat.lng && feature.center[1] === lngLat.lat
     )
 
-    dispatch(pickCity(exact.length !== 0 ? exact[0] : result.features[0]))
+    console.log(result.features)
+    console.log(exact)
+
+    result.features.length !== 0 && dispatch(pickCity(exact.length !== 0 ? exact[0] : result.features[0]))
 
     map?.current?.flyTo({
       center: [lngLat.lng, lngLat.lat],
