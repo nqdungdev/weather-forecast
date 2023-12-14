@@ -2,20 +2,27 @@ import weatherSlice from './features/weather.slice'
 import geoSlice from '~/features/geo.slice'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
-import { geoApi } from './services/geoApi.services'
-import { weatherApi } from './services/weatherApi.services'
 import { oneCallApi } from './services/oneCallApi.services'
+import { IPAddressApi } from './services/IPAddressApi.services'
+import { locationIPApi } from './services/locationIPApi.services'
+import { weatherApi } from './services/weatherApi.services'
 
 const store = configureStore({
   reducer: {
     geoSlice,
     weatherSlice,
-    [geoApi.reducerPath]: geoApi.reducer,
+    [oneCallApi.reducerPath]: oneCallApi.reducer,
     [weatherApi.reducerPath]: weatherApi.reducer,
-    [oneCallApi.reducerPath]: oneCallApi.reducer
+    [IPAddressApi.reducerPath]: IPAddressApi.reducer,
+    [locationIPApi.reducerPath]: locationIPApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(geoApi.middleware, weatherApi.middleware, oneCallApi.middleware)
+    getDefaultMiddleware().concat(
+      oneCallApi.middleware,
+      weatherApi.middleware,
+      IPAddressApi.middleware,
+      locationIPApi.middleware
+    )
 })
 
 setupListeners(store.dispatch)

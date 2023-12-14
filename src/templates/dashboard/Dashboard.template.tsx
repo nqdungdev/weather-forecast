@@ -9,14 +9,28 @@ import useResize from '~/hooks/useResize'
 import { GeocodingControl } from '@maptiler/geocoding-control/react'
 import type { Feature } from 'geojson'
 import { pickCity, setCityListed } from '~/features/geo.slice'
+import { useGetIPAddressQuery } from '~/services/IPAddressApi.services'
+import { useGetLocationCityQuery, useGetLocationLatLngQuery } from '~/services/locationIPApi.services'
 // import { MapController } from 'node_modules/@maptiler/geocoding-control/types'
 
 const Dashboard = () => {
+  const dispatch = useDispatch<AppDispatch>()
   const [showAside, setShowAside] = useState<boolean>(false)
+  const { data: ip } = useGetIPAddressQuery()
+  const { data: latLng } = useGetLocationLatLngQuery(ip || '118.69.244.151')
+  const { data: city } = useGetLocationCityQuery(ip || '118.69.244.151')
+
+  useEffect(() => {
+    latLng &&
+      city &&
+      dispatch(pickCity({ center: [Number(latLng.split(',')[1]), Number(latLng.split(',')[0])], place_name_en: city }))
+
+    return () => {}
+  }, [city, latLng, dispatch])
+
   // const [mapController, setMapController] = useState<MapController>()
   const { width } = useResize()
   // const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     width >= 1024 ? setShowAside(true) : setShowAside(false)
@@ -43,7 +57,7 @@ const Dashboard = () => {
   // }, [])
 
   return (
-    <div className='relative w-full py-3 px-4 grid grid-cols-12 bg-primary-dark min-h-screen'>
+    <div className='relative w-full py-3 px-4 grid grid-cols-12 bg-primary-dark min-h-screen bg-hero-pattern bg-cover'>
       <div className='h-full w-full col-span-12 lg:col-span-1 contents lg:block py-2 px-1'>
         {showAside && <Aside />}
       </div>

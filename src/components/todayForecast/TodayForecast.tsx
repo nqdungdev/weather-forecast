@@ -22,7 +22,6 @@ const TodayForecast = ({ className }: Props) => {
     lat: (cityPicker as any).center[1]
   })
 
-  console.log(oneCall)
   useEffect(() => {
     width && width <= 400 ? setShow(3) : setShow(5)
 

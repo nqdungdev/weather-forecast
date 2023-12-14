@@ -10,7 +10,6 @@ const WeatherHead = ({ className }: Props) => {
   const ref = useRef(null)
   const { width } = useContainerDimensions(ref)
   const { cityPicker } = useSelector((state: RootState) => state.geoSlice)
-  console.log(cityPicker)
   const { data: oneCall } = useGetOneCallQuery({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lon: (cityPicker as any).center[0],

@@ -8,7 +8,7 @@ type State = {
 }
 
 const initialState: State = {
-  cityPicker: { center: [107.8333, 16.1667], place_name_en: 'VietNam' },
+  cityPicker: { center: [106.7049, 10.7772], place_name_en: 'Ho Chi Minh City' },
   cityList: []
 }
 
@@ -16,7 +16,7 @@ export const geoSlice = createSlice({
   name: 'geo',
   initialState,
   reducers: {
-    pickCity: (state, action: PayloadAction<Feature>) => {
+    pickCity: (state, action: PayloadAction<Feature | { center: [number, number]; place_name_en: string }>) => {
       state.cityPicker = action.payload
     },
     setCityListed: (state, action: PayloadAction<Feature[]>) => {

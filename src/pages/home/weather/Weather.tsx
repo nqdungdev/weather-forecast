@@ -6,7 +6,6 @@ import AirConditionsExtend from '../airConditions/AirConditionsExtend'
 
 const Weather = () => {
   const [seeMore, setSeeMore] = useState<boolean>(false)
-
   return (
     <>
       <WeatherHead />
