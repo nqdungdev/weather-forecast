@@ -64,7 +64,7 @@ export default {
         ]
       },
       backgroundImage: {
-        'hero-pattern': "url('./src/assets/images/background/bg.jpg')"
+        'hero-pattern': "url('~/assets/images/background/bg.jpg')"
       },
       keyframes: {
         shake: {
