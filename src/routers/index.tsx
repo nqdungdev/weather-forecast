@@ -3,7 +3,7 @@ import Dashboard from '~/templates/dashboard/Dashboard.template'
 import Home from '~/pages/home/Home.page'
 import Search from '~/pages/search/Search.page'
 import Settings from '~/pages/settings/Setting'
-import WeatherMap from '~/pages/WeatherMap/WeatherMap.page'
+import WeatherMap from '~/pages/weatherMap/WeatherMap.page'
 
 const router = createBrowserRouter([
   {

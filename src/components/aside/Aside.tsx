@@ -16,8 +16,8 @@ const Aside = () => {
   ]
 
   return (
-    <Card className='flex-col !justify-start !w-max lg:!w-full fixed lg:static top-0 right-0 mx-6 my-20 lg:m-0 z-10'>
-      <div className='flex flex-col justify-center items-center py-6 lg:p-0'>
+    <Card className='flex-rows lg:flex-col lg:!justify-start z-10'>
+      <div className='hidden lg:flex flex-col justify-center items-center'>
         <div className='w-12 h-12'>
           <div
             className='w-full h-full opacity-100'
@@ -36,14 +36,15 @@ const Aside = () => {
         <Link
           key={index}
           to={category.path}
-          className={`flex flex-col justify-center items-center py-6 ${
+          className={`flex gap-2 lg:flex-col justify-center items-center lg:py-6 ${
             active === category.path ? 'text-secondary-light' : 'text-secondary'
           } `}
           onClick={() => setActive(category.path)}
+          title={category.label}
         >
           <FontAwesomeIcon className='w-6 h-6' icon={['fas', category.icon]} />
 
-          <p className='text-body capitalize'>{category.label}</p>
+          <p className='hidden sm:block text-body capitalize'>{category.label}</p>
         </Link>
       ))}
     </Card>
